@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 use bevy_steering::*;
 
+use bevy_steering::components::{Flee, Velocity};
+
 mod utils;
 
 use utils::{
@@ -50,7 +52,7 @@ fn init(
             ..default()
         },
         Flee::new(player),
-        Velocity(Vec2::ZERO)
+        Velocity::new()
     ));
 
 }

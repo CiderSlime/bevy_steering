@@ -5,7 +5,7 @@ use bevy::prelude::*;
 pub struct Seek {
     #[deref]
     target: Vec2,
-    pub(crate) dist: f32
+    pub(crate) dist: f32,
 } impl Seek {
     pub fn new(target: Vec2) -> Self {
         Seek {
@@ -19,7 +19,7 @@ pub struct Seek {
 pub struct Flee {
     pub(crate) target: Entity,
     #[deref]
-    pos: Vec2
+    pos: Vec2,
 } impl Flee {
     pub fn new (target: Entity) -> Self {
         Flee {
