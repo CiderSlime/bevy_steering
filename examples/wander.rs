@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use bevy_steering::*;
+use bevy_steering::components::{Velocity, Wander};
 
 mod utils;
 
@@ -49,7 +50,7 @@ fn init(
                 ..default()
             },
             Wander(95.),
-            Velocity(Vec2::ZERO)
+            Velocity::new()
         ));
     }
 }

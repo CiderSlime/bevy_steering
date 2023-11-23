@@ -17,8 +17,11 @@ impl Plugin for SteeringPlugin {
         app
             .add_systems(Update, (
                 get_transforms,
-                seek,
-                flee,
+                (
+                    seek,
+                    flee,
+                    wander
+                ),
                 finalize
             ).chain())
             .init_resource::<Point>();
