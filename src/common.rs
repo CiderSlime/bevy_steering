@@ -21,3 +21,11 @@ pub fn truncate_exceeded(v: Vec2, max: f32) -> Vec2 {
     let i = if i < 1.0 { i } else { 1.0 };
     v * i
 }
+
+pub fn check_overflow(mut t: Vec3, width: f32, height: f32) -> Vec3 {
+    if t.x > width {t.x = 0.}
+    if t.x < 0. {t.x = width}
+    if t.y > height {t.y = 0.}
+    if t.y < 0. {t.y = height}
+    t
+}

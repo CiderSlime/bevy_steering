@@ -109,7 +109,7 @@ pub fn player_seek(
     if mouse.just_pressed(MouseButton::Left) {
         if let Some(cursor_pos) = **cursor_pos {
             commands.entity(players.single()).insert(Seek::new(cursor_pos));
-
+            info!("{}", cursor_pos);
             set_point(point, commands, cursor_pos, handles);
         }
     }

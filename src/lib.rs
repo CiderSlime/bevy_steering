@@ -53,6 +53,7 @@ pub struct MapInfo {
 fn finalize(
     mut query: Query<(&mut Velocity, &mut Transform)>,
     time: Res<Time>,
+    info: Res<MapInfo>
 ) {
     for (mut velocity, mut transform) in query.iter_mut() {
         let mut steering = velocity.desired - **velocity;
@@ -60,6 +61,11 @@ fn finalize(
 
         **velocity = truncate_exceeded(**velocity + steering, velocity.speed);
         transform.translation += (**velocity * time.delta_seconds()).extend(0.);
+        transform.translation = common::check_overflow(
+            transform.translation,
+            info.map_width,
+            info.map_height
+        );
         velocity.desired = Vec2::ZERO;  // should be recalculated during next step
     }
 }
