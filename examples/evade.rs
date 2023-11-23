@@ -52,7 +52,7 @@ fn init(
             ..default()
         },
         Evade::new(player),
-        Velocity::new()
+        Velocity::new(90.)
     ));
 
 }

@@ -10,7 +10,7 @@ pub fn seek(
         let delta = **target - transform.translation.truncate();
         let dist = delta.length() - target.dist;
 
-        velocity.desired += delta.normalize_or_zero() * SPEED;
+        velocity.change_desired(delta);
         if dist < ARRIVAL_RADIUS { velocity.desired *= dist / ARRIVAL_RADIUS }
     }
 }
@@ -21,7 +21,7 @@ pub fn flee (
     for (flee, transform, mut velocity) in query.iter_mut(){
         let delta = transform.translation.truncate() - **flee;
         if delta.length() < FLEE_RADIUS {
-            velocity.desired += (delta).normalize_or_zero() * SPEED;
+            velocity.change_desired(delta);
         }
     }
 }
@@ -31,14 +31,28 @@ pub fn evade(
 ) {
     for (evade, transform, mut velocity) in query.iter_mut() {
         let dist = (evade.t_pos - transform.translation.truncate()).length();
-        let updates_ahead = dist / SPEED;
+        let updates_ahead = dist / MAX_SPEED;
         let future_pos = evade.t_pos + evade.t_velocity * updates_ahead;
 
         // flee logic here
         let delta = transform.translation.truncate() - future_pos;
         if delta.length() < FLEE_RADIUS {
-            velocity.desired += (delta).normalize_or_zero() * SPEED;
+            velocity.change_desired(delta);
         }
+    }
+}
+
+pub fn pursuit(
+    mut query: Query<(&Pursuit, &Transform, &mut Velocity)>
+) {
+    for (pursuit, transform, mut velocity) in query.iter_mut() {
+        let dist = (pursuit.t_pos - transform.translation.truncate()).length();
+        let updates_ahead = dist / MAX_SPEED;
+        let future_pos = pursuit.t_pos + pursuit.t_velocity * updates_ahead;
+
+        // seek logic here
+        let delta = future_pos - transform.translation.truncate();
+        velocity.change_desired(delta);
     }
 }
 

@@ -21,7 +21,8 @@ impl Plugin for SteeringPlugin {
                     seek,
                     flee,
                     wander,
-                    evade
+                    evade,
+                    pursuit
                 ),
                 finalize
             ).chain())
@@ -57,7 +58,7 @@ fn finalize(
         let mut steering = velocity.desired - **velocity;
         steering = truncate_exceeded(steering, MAX_FORCE); // /= mass
 
-        **velocity = truncate_exceeded(**velocity + steering, SPEED);
+        **velocity = truncate_exceeded(**velocity + steering, velocity.speed);
         transform.translation += (**velocity * time.delta_seconds()).extend(0.);
         velocity.desired = Vec2::ZERO;  // should be recalculated during next step
     }
@@ -65,12 +66,19 @@ fn finalize(
 
 fn get_transforms(
     transforms: Query<(&Transform, &Velocity)>,
-    mut evade: Query<&mut Evade>
+    mut evade: Query<&mut Evade>,
+    mut pursuit: Query<&mut Pursuit>
 ) {
     // get entity transforms here to avoid conflicting queries
     for mut evade in evade.iter_mut() {
         let (chaser_transform, chaser_velocity) = transforms.get(evade.target).unwrap();
         evade.t_pos = chaser_transform.translation.truncate();
         evade.t_velocity = **chaser_velocity;
+    }
+
+    for mut pursuit in pursuit.iter_mut() {
+        let (chaser_transform, chaser_velocity) = transforms.get(pursuit.target).unwrap();
+        pursuit.t_pos = chaser_transform.translation.truncate();
+        pursuit.t_velocity = **chaser_velocity;
     }
 }

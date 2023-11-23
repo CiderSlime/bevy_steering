@@ -150,6 +150,6 @@ pub fn spawn_player(
             ..default()
         },
         Player,
-        Velocity::new()
+        Velocity::new(85.)
     )).id()
 }

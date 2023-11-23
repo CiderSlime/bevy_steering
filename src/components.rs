@@ -42,6 +42,21 @@ pub struct Evade {
     }
 }
 
+#[derive(Component)]
+pub struct Pursuit {
+    pub(crate) target: Entity,
+    pub(crate) t_pos: Vec2,
+    pub(crate) t_velocity: Vec2
+} impl Pursuit {
+    pub fn new (target: Entity) -> Self {
+        Self {
+            t_pos: Vec2::ZERO,
+            t_velocity: Vec2::ZERO,
+            target
+        }
+    }
+}
+
 #[derive(Component, Deref, DerefMut)]
 pub struct Wander(pub f32);
 
@@ -50,15 +65,17 @@ pub struct Velocity{
     #[deref]
     current: Vec2,
     pub(crate) desired: Vec2,
+    pub(crate) speed: f32
 }
 impl Velocity {
-    pub fn new() -> Self {
+    pub fn new(speed: f32) -> Self {
         Self {
             current: Vec2::ZERO,
-            desired: Vec2::ZERO
+            desired: Vec2::ZERO,
+            speed
         }
     }
-    fn is_some(&self) -> bool {
-        self.current != Vec2::ZERO
+    pub fn change_desired(&mut self, add: Vec2) {
+        self.desired += add.normalize_or_zero() * self.speed;
     }
 }
