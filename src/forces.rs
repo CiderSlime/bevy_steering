@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use rand::{prelude, Rng, thread_rng};
+use rand::{Rng, thread_rng};
 use crate::components::*;
 use crate::constants::*;
 
@@ -27,10 +27,10 @@ pub fn flee (
 }
 
 pub fn wander (
-    mut query: Query<(&mut Wander, &Transform, &mut Velocity)>
+    mut query: Query<(&mut Wander, &mut Velocity)>
 ) {
     let mut rng = thread_rng();
-    for (mut wander, transform, mut velocity) in query.iter_mut() {
+    for (mut wander, mut velocity) in query.iter_mut() {
         let circle_center = velocity.normalize_or_zero() * CIRCLE_DISTANCE;
         let mut displacement = Vec2::new(0., -CIRCLE_DISTANCE);
 

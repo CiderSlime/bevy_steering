@@ -3,7 +3,7 @@ use bevy::{prelude::*, sprite::Anchor};
 use bevy::sprite::MaterialMesh2dBundle;
 
 use bevy_steering::*;
-use bevy_steering::components::{Seek, Velocity};
+use bevy_steering::components::{Seek, Velocity, Flee};
 
 pub const MAP_SIZE: UVec2 = UVec2::new(24, 24);
 pub const TILE_SIZE: Vec2 = Vec2::new(32., 32.);
@@ -73,35 +73,62 @@ pub fn spawn_empty_map(commands: &mut Commands, asset_server: &Res<AssetServer>)
     }
 }
 
+fn set_point(
+    mut point: ResMut<Point>,
+    mut commands: Commands,
+    cursor_pos: Vec2,
+    handles: Res<PointHandles>,
+) {
+    if let Some(id) = **point { commands.entity(id).despawn_recursive() }
+
+    let id = commands.spawn((
+        MaterialMesh2dBundle {
+            transform: Transform{
+                translation: cursor_pos.extend(1.),
+                ..default()
+            },
+            mesh: handles.mesh.clone().into(),
+            material: handles.material.clone(),
+            ..default()
+        },
+    )).id();
+
+    **point = Some(id);
+}
+
 // Navigate the player to wherever you click
-pub fn move_player(
+pub fn player_seek(
     mut commands: Commands,
     players: Query<Entity, With<Player>>,
     cursor_pos: Res<CursorPos>,
     mouse: Res<Input<MouseButton>>,
     handles: Res<PointHandles>,
-    mut point: ResMut<Point>
+    point: ResMut<Point>
 
 ) {
     if mouse.just_pressed(MouseButton::Left) {
         if let Some(cursor_pos) = **cursor_pos {
             commands.entity(players.single()).insert(Seek::new(cursor_pos));
 
-            if let Some(id) = **point { commands.entity(id).despawn_recursive() }
+            set_point(point, commands, cursor_pos, handles);
+        }
+    }
+}
 
-            let id = commands.spawn((
-                MaterialMesh2dBundle {
-                    transform: Transform{
-                        translation: cursor_pos.extend(1.),
-                        ..default()
-                    },
-                    mesh: handles.mesh.clone().into(),
-                    material: handles.material.clone(),
-                    ..default()
-                },
-            )).id();
+pub fn player_flee(
+    mut commands: Commands,
+    players: Query<Entity, With<Player>>,
+    cursor_pos: Res<CursorPos>,
+    mouse: Res<Input<MouseButton>>,
+    handles: Res<PointHandles>,
+    point: ResMut<Point>
 
-            **point = Some(id);
+) {
+    if mouse.just_pressed(MouseButton::Left) {
+        if let Some(cursor_pos) = **cursor_pos {
+            commands.entity(players.single()).insert(Flee::new(cursor_pos));
+
+            set_point(point, commands, cursor_pos, handles);
         }
     }
 }

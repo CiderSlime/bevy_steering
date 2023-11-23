@@ -17,17 +17,29 @@ pub struct Seek {
 
 #[derive(Component, Deref, DerefMut)]
 pub struct Flee {
-    pub(crate) target: Entity,
     #[deref]
-    pos: Vec2,
+    target: Vec2,
 } impl Flee {
-    pub fn new (target: Entity) -> Self {
+    pub fn new (target: Vec2) -> Self {
         Flee {
-            pos: Vec2::ZERO,
             target
         }
     }
 }
+
+// #[derive(Component, Deref, DerefMut)]
+// pub struct Evade {
+//     pub(crate) target: Entity,
+//     #[deref]
+//     pos: Vec2,
+// } impl Evade {
+//     pub fn new (target: Entity) -> Self {
+//         Flee {
+//             pos: Vec2::ZERO,
+//             target
+//         }
+//     }
+// }
 
 #[derive(Component, Deref, DerefMut)]
 pub struct Wander(pub f32);

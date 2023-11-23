@@ -25,7 +25,7 @@ fn main() {
         .add_systems(Startup, init)
         .add_systems(Update, (
             utils::update_cursor_pos,
-            utils::move_player
+            utils::player_flee
         ))
         .run();
 }
@@ -39,20 +39,5 @@ fn init(
     spawn_camera(&mut commands);
     spawn_empty_map(&mut commands, &asset_server);
     init_pointer(&mut commands, &mut meshes, &mut materials);
-    let player = spawn_player(&mut commands, &asset_server);
-
-    commands.spawn((
-        SpriteBundle {
-            sprite: Sprite{
-                color: Color::YELLOW_GREEN,
-                ..default()
-            },
-            transform: Transform::from_translation((uvec_pos(10, 10) + TILE_SIZE / 2.).extend(1.)),
-            texture: asset_server.load("player.png"),
-            ..default()
-        },
-        Flee::new(player),
-        Velocity::new()
-    ));
-
+    spawn_player(&mut commands, &asset_server);
 }

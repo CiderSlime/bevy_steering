@@ -58,7 +58,7 @@ fn finalize(
 
         **velocity = truncate_exceeded(**velocity + steering, SPEED);
         transform.translation += (**velocity * time.delta_seconds()).extend(0.);
-        velocity.desired = Vec2::ZERO;
+        velocity.desired = Vec2::ZERO;  // should be recalculated during next step
     }
 }
 
@@ -67,8 +67,8 @@ fn get_transforms(
     mut flee: Query<&mut Flee>
 ) {
     // get entity transforms here to avoid conflicting queries
-    for mut flee in flee.iter_mut() {
-        let chaser_transform = transforms.get(flee.target).unwrap();
-        **flee = chaser_transform.translation.truncate();
-    }
+    // for mut flee in flee.iter_mut() {
+    //     let chaser_transform = transforms.get(flee.target).unwrap();
+    //     **flee = chaser_transform.translation.truncate();
+    // }
 }
