@@ -27,19 +27,20 @@ pub struct Flee {
     }
 }
 
-// #[derive(Component, Deref, DerefMut)]
-// pub struct Evade {
-//     pub(crate) target: Entity,
-//     #[deref]
-//     pos: Vec2,
-// } impl Evade {
-//     pub fn new (target: Entity) -> Self {
-//         Flee {
-//             pos: Vec2::ZERO,
-//             target
-//         }
-//     }
-// }
+#[derive(Component)]
+pub struct Evade {
+    pub(crate) target: Entity,
+    pub(crate) t_pos: Vec2,
+    pub(crate) t_velocity: Vec2
+} impl Evade {
+    pub fn new (target: Entity) -> Self {
+        Self {
+            t_pos: Vec2::ZERO,
+            t_velocity: Vec2::ZERO,
+            target
+        }
+    }
+}
 
 #[derive(Component, Deref, DerefMut)]
 pub struct Wander(pub f32);

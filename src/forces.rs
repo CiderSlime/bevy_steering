@@ -26,6 +26,22 @@ pub fn flee (
     }
 }
 
+pub fn evade(
+    mut query: Query<(&Evade, &Transform, &mut Velocity)>
+) {
+    for (evade, transform, mut velocity) in query.iter_mut() {
+        let dist = (evade.t_pos - transform.translation.truncate()).length();
+        let updates_ahead = dist / SPEED;
+        let future_pos = evade.t_pos + evade.t_velocity * updates_ahead;
+
+        // flee logic here
+        let delta = transform.translation.truncate() - future_pos;
+        if delta.length() < FLEE_RADIUS {
+            velocity.desired += (delta).normalize_or_zero() * SPEED;
+        }
+    }
+}
+
 pub fn wander (
     mut query: Query<(&mut Wander, &mut Velocity)>
 ) {

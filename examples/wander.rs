@@ -23,7 +23,6 @@ fn main() {
         .add_systems(Startup, init)
         .add_systems(Update, (
             utils::update_cursor_pos,
-            utils::player_seek
         ))
         .run();
 }

@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use bevy_steering::*;
 
-use bevy_steering::components::{Flee, Velocity};
+use bevy_steering::components::{Evade, Velocity};
 
 mod utils;
 
@@ -25,7 +25,7 @@ fn main() {
         .add_systems(Startup, init)
         .add_systems(Update, (
             utils::update_cursor_pos,
-            utils::player_flee
+            utils::player_seek
         ))
         .run();
 }
@@ -51,7 +51,7 @@ fn init(
             texture: asset_server.load("player.png"),
             ..default()
         },
-        Flee::new(player),
+        Evade::new(player),
         Velocity::new()
     ));
 
