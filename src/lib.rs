@@ -22,11 +22,43 @@ impl Plugin for SteeringPlugin {
                     flee,
                     wander,
                     evade,
-                    pursuit
+                    pursuit,
+                    avoidance
                 ),
+                gizmos,
                 finalize
             ).chain())
             .init_resource::<Point>();
+    }
+}
+
+fn gizmos(
+    mut gizmos: Gizmos,
+    player: Query<(&Transform, &Velocity)>,
+    obstacles: Query<(&Transform, &Obstacle)>
+
+) {
+    let (transform, velocity) = player.single();
+    let pos = transform.translation.truncate();
+    gizmos.line_2d(
+        pos,
+        pos + **velocity,
+        Color::GREEN,
+    );
+
+    gizmos.line_2d(
+        pos,
+        pos + velocity.desired,
+        Color::YELLOW,
+    );
+
+    for (transform, obstacle) in obstacles.iter() {
+        gizmos.rect_2d(
+            transform.translation.truncate(),
+            0_f32,
+            Vec2::new(obstacle.size*2., obstacle.size*2.),
+            Color::YELLOW
+        );
     }
 }
 

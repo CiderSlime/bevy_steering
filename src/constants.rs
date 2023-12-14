@@ -15,5 +15,5 @@ pub const CIRCLE_DISTANCE: f32 = 86.;
 pub const ANGLE_CHANGE:f32 = 11.;
 
 
-pub const MAX_SEE_AHEAD: f32 = 82.;
-pub const EVADE_FORCE: f32 = 8.0;
+pub const MAX_SEE_AHEAD: f32 = 24.;
+pub const EVADE_FORCE: f32 = 14.0;

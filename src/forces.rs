@@ -26,6 +26,41 @@ pub fn flee (
     }
 }
 
+pub fn avoidance(
+    mut query: Query<(Entity, &Transform, &mut Velocity)>,
+    neighbours_query: Query<(Entity, &Transform, &Obstacle)>
+) {
+
+    for (entity, transform, mut velocity) in query.iter_mut() {
+        let position = transform.translation.truncate();
+        let ahead = position + velocity.normalize() * MAX_SEE_AHEAD;
+
+        velocity.gizmos.ahead = Some(ahead);
+
+        let ahead2 = position + velocity.normalize() * MAX_SEE_AHEAD * 0.5;
+        for (n_entity, n_transform, obstacle) in neighbours_query.iter() {
+            if entity != n_entity {
+                let n_position = n_transform.translation.truncate();
+                for probe in [ahead2, ahead] {
+                    if (probe.x - n_position.x).abs() <= obstacle.size && (probe.y - n_position.y).abs() <= obstacle.size {
+                        velocity.change_desired(Vec2::new(
+                            ahead.x - n_position.x, ahead.y - n_position.y
+                        ).normalize() * EVADE_FORCE);
+                        break
+                    }
+                }
+            }
+        }
+    }
+}
+
+// pub fn separation(
+//     mut query: Query<(Entity, &Transform, &mut Velocity)>,
+//     neighbours_query: Query<(Entity, &Velocity)>
+// ) {
+//
+// }
+
 pub fn evade(
     mut query: Query<(&Evade, &Transform, &mut Velocity)>
 ) {

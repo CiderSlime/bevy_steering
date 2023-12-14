@@ -3,7 +3,7 @@ use bevy::{prelude::*, sprite::Anchor};
 use bevy::sprite::MaterialMesh2dBundle;
 
 use bevy_steering::*;
-use bevy_steering::components::{Seek, Velocity, Flee};
+use bevy_steering::components::{Seek, Velocity, Flee, Obstacle};
 
 pub const MAP_SIZE: UVec2 = UVec2::new(24, 24);
 pub const TILE_SIZE: Vec2 = Vec2::new(32., 32.);
@@ -62,13 +62,45 @@ pub fn spawn_empty_map(commands: &mut Commands, asset_server: &Res<AssetServer>)
 
             commands.spawn(SpriteBundle {
                 sprite: Sprite {
-                    anchor: Anchor::BottomLeft,
                     ..default()
                 },
                 transform: Transform::from_translation(pos.extend(0.)),
                 texture: tile_image.clone(),
                 ..default()
             });
+        }
+    }
+}
+
+pub fn spawn_map(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    walls: Vec<(u32, u32)>
+) {
+    let tile_image = asset_server.load("tile.png");
+    let uvec_pos = |x: u32, y: u32| UVec2::new(x, y).as_vec2() * TILE_SIZE;
+    commands.insert_resource(MapInfo::new(MAP_SIZE, TILE_SIZE));
+
+    for x in 0..MAP_SIZE.x {
+        for y in 0..MAP_SIZE.y {
+            let pos = uvec_pos(x, y);
+            let is_wall = walls.contains(&(x, y));
+            let mut sprite = Sprite {
+                ..default()
+            };
+
+            if is_wall { sprite.color = Color::BLACK }
+
+            let wall_id = commands.spawn(SpriteBundle {
+                sprite,
+                transform: Transform::from_translation(pos.extend(0.)),
+                texture: tile_image.clone(),
+                ..default()
+            }).id();
+
+            if is_wall {
+                commands.entity(wall_id).insert( Obstacle{ size: 24.} );
+            }
         }
     }
 }

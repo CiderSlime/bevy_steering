@@ -60,22 +60,37 @@ pub struct Pursuit {
 #[derive(Component, Deref, DerefMut)]
 pub struct Wander(pub f32);
 
+pub struct GizmosData {
+    pub ahead: Option<Vec2>,
+    pub ahead2: Option<Vec2>
+}
+
 #[derive(Component, Deref, DerefMut)]
 pub struct Velocity{
     #[deref]
     current: Vec2,
-    pub(crate) desired: Vec2,
-    pub(crate) speed: f32
+    pub desired: Vec2,
+    pub(crate) speed: f32,
+    pub gizmos: GizmosData
 }
 impl Velocity {
     pub fn new(speed: f32) -> Self {
         Self {
             current: Vec2::ZERO,
             desired: Vec2::ZERO,
+            gizmos: GizmosData {
+                ahead: None,
+                ahead2: None
+            },
             speed
         }
     }
     pub fn change_desired(&mut self, add: Vec2) {
         self.desired += add.normalize_or_zero() * self.speed;
     }
+}
+
+#[derive(Component, Deref, DerefMut)]
+pub struct Obstacle{
+    pub size: f32
 }
